@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>土木試験アプリ</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<h1>土木試験アプリ</h1>
+
+<div id="quiz-container">
+
+    <div id="question-number"></div>
+
+    <!-- 進捗表示 -->
+<div id="progress-text"></div>
+
+<!-- 進捗バー -->
+<div id="progress-container">
+    <div id="progress-bar"></div>
+</div>
+
+    <h2 id="question"></h2>
+
+    <div id="choices"></div>
+
+</div>
+
+<br>
+
+<button id="prev-btn">前へ</button>
+
+<button id="next-btn">次へ</button>
+
+<button id="score-btn">
+採点する
+</button>
+
+<div id="result"></div>
+
+<div id="unanswered-area"></div>
+
+<div id="answer-review"></div>
+
+<button
+id="restart-btn"
+style="display:none;"
+>
+もう一度挑戦
+</button>
+
+<script src="js/questions.js"></script>
+<script src="js/script.js"></script>
+
+</body>
+</html>
+
