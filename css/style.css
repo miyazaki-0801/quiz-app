@@ -551,3 +551,13 @@ h1 {
 }
 
 }
+
+/* 空の結果エリアは非表示 */
+
+#result:empty,
+#answer-review:empty,
+#unanswered-area:empty {
+
+    display: none;
+
+}
