@@ -182,6 +182,46 @@ document
 
 };
 
+/* ========================================
+   スキップボタン
+======================================== */
+const skipButton =
+document.getElementById(
+    "skip-btn"
+);
+
+skipButton.addEventListener(
+    "click",
+    () => {
+
+        userAnswers[currentIndex] = -1;
+
+        localStorage.setItem(
+            "quizAnswers",
+            JSON.stringify(
+                userAnswers
+            )
+        );
+
+        if (
+            currentIndex <
+            questions.length - 1
+        ) {
+
+            currentIndex++;
+
+            localStorage.setItem(
+                "quizCurrentIndex",
+                currentIndex
+            );
+
+            showQuestion();
+
+        }
+
+    }
+);
+
 
 /* ========================================
    採点
@@ -249,21 +289,72 @@ function gradeQuiz() {
 
     let correctCount = 0;
 
-    questions.forEach(
-        (question, index) => {
+    let unansweredCount = 0;
 
-            if (
-                userAnswers[index]
-                === question.answer
-            ) {
+    let skippedCount = 0;
 
-                correctCount++;
+    const skippedQuestions =
+questions.filter(
+    (question, index) =>
+    userAnswers[index] === -1
+);
 
-            }
+let skippedHtml = "";
+
+if (
+    skippedQuestions.length > 0
+) {
+
+    skippedHtml +=
+    "<h3>🟧 スキップした問題</h3>";
+
+    skippedQuestions.forEach(
+        question => {
+
+            skippedHtml += `
+                <p>
+                    問${question.id}
+                </p>
+            `;
 
         }
     );
 
+}
+
+   questions.forEach(
+    (question, index) => {
+
+        if (
+            userAnswers[index]
+            === undefined
+        ) {
+
+            unansweredCount++;
+
+        }
+
+        if (
+            userAnswers[index]
+            === -1
+        ) {
+
+            skippedCount++;
+
+        }
+
+        if (
+            userAnswers[index]
+            === question.answer
+        ) {
+
+            correctCount++;
+
+        }
+
+    }
+);
+ 
     const rate =
     (
         correctCount
@@ -310,27 +401,37 @@ function gradeQuiz() {
     }
 
     document
-    .getElementById("result")
-    .innerHTML = `
+.getElementById("result")
+.innerHTML = `
 
-        <h2>
-        ${questions.length}問中
-        ${correctCount}問正解
-        </h2>
+    <h2>
+    ${questions.length}問中
+    ${correctCount}問正解
+    </h2>
 
-        <p class="score-rate">
-        ${rate}%
-        </p>
+    <p class="score-rate">
+    ${rate}%
+    </p>
 
-        <h3>
-        ランク：${rank}
-        </h3>
+    <h3>
+    ランク：${rank}
+    </h3>
 
-        <p>
-        ${message}
-        </p>
+    <p>
+    ${message}
+    </p>
 
-    `;
+    <p>
+    スキップ：${skippedCount}問
+    </p>
+
+    ${skippedHtml}
+
+    <p>
+    未回答：${unansweredCount}問
+    </p>
+
+`;
 
     showAnswerReview();
 
@@ -341,6 +442,7 @@ function gradeQuiz() {
     "inline-block";
 
 }
+
 
 
 /* ========================================
@@ -360,40 +462,43 @@ function showUnansweredList(
     `<h3>未回答が${unanswered.length}問あります</h3>`;
 
     unanswered.forEach(
-        questionId => {
+    questionId => {
 
-            const button =
-            document.createElement(
-                "button"
+        const button =
+document.createElement(
+    "button"
+);
+
+button.textContent =
+`問${questionId}`;
+
+button.classList.add(
+    "unanswered-btn"
+);
+        
+        button.onclick = () => {
+
+            const targetIndex =
+            questions.findIndex(
+                q =>
+                q.id === questionId
             );
 
-            button.textContent =
-            `問${questionId}`;
+            currentIndex =
+            targetIndex;
 
-            button.onclick = () => {
+            showQuestion();
 
-                const targetIndex =
-                questions.findIndex(
-                    q =>
-                    q.id === questionId
-                );
+            area.innerHTML = "";
 
-                currentIndex =
-                targetIndex;
+        };
 
-                showQuestion();
+        area.appendChild(
+            button
+        );
 
-                area.innerHTML = "";
-
-            };
-
-            area.appendChild(
-                button
-            );
-
-        }
-    );
-
+    }
+);
 }
 
 
@@ -420,15 +525,42 @@ function showAnswerReview() {
             const result =
             isCorrect ? "○" : "×";
 
-            const resultClass =
-            isCorrect
-            ? "correct"
-            : "incorrect";
+            let resultClass = "";
 
-            const userAnswerText =
-            question.choices[
-                userAnswers[index]
-            ];
+if (
+    userAnswers[index] === -1
+) {
+
+    resultClass =
+    "skipped";
+
+}
+else {
+
+    resultClass =
+    isCorrect
+    ? "correct"
+    : "incorrect";
+
+}
+            let userAnswerText = "";
+
+if (
+    userAnswers[index] === -1
+) {
+
+    userAnswerText =
+    "⏭️ スキップ";
+
+}
+else {
+
+    userAnswerText =
+    question.choices[
+        userAnswers[index]
+    ];
+
+}
 
             const correctAnswerText =
             question.choices[
