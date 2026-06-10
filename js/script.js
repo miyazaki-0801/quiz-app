@@ -1,3 +1,5 @@
+let currentQuestions = questions;
+
 /* ========================================
    現在表示中の問題番号
 ======================================== */
@@ -43,24 +45,52 @@ document.getElementById(
 
 function showQuestion() {
 
+    /* 問題が1件も無い場合 */
+
+    if (
+        currentQuestions.length === 0
+    ) {
+
+        document.getElementById(
+            "question-number"
+        ).textContent = "";
+
+        document.getElementById(
+            "progress-text"
+        ).textContent =
+        "問題が登録されていません";
+
+        document.getElementById(
+            "progress-bar"
+        ).style.width = "0%";
+
+        questionElement.textContent =
+        "この年度の問題はまだ登録されていません。";
+
+        choicesElement.innerHTML = "";
+
+        return;
+
+    }
+
     const currentQuestion =
-    questions[currentIndex];
+    currentQuestions[currentIndex];
 
     document.getElementById(
-        "question-number"
-    ).textContent =
-    `問 ${currentQuestion.id}`;
+    "question-number"
+).textContent =
+`${currentQuestion.year} 第${currentQuestion.id}問`;
 
     document.getElementById(
         "progress-text"
     ).textContent =
-    `${currentIndex + 1}問目 / 全${questions.length}問`;
+    `${currentIndex + 1}問目 / 全${currentQuestions.length}問`;
 
     const progressPercent =
     (
         (currentIndex + 1)
         /
-        questions.length
+        currentQuestions.length
     ) * 100;
 
     document.getElementById(
@@ -70,6 +100,29 @@ function showQuestion() {
 
     questionElement.textContent =
     currentQuestion.question;
+
+    const imageElement =
+document.getElementById(
+    "question-image"
+);
+
+if(currentQuestion.image){
+
+    imageElement.src =
+    currentQuestion.image;
+
+    imageElement.style.display =
+    "block";
+
+}
+else{
+
+    imageElement.src = "";
+
+    imageElement.style.display =
+    "none";
+
+}
 
     choicesElement.innerHTML = "";
 
@@ -85,16 +138,25 @@ function showQuestion() {
                 "choice-btn"
             );
 
-            button.textContent =
-            choice;
+            const choiceNumber =
 
+["①","②","③","④"];
+
+button.innerHTML = `
+<span class="choice-number">
+${choiceNumber[index]}
+</span>
+${choice}
+`;
             if (
                 userAnswers[currentIndex]
                 === index
             ) {
+
                 button.classList.add(
                     "selected"
                 );
+
             }
 
             button.onclick = () => {
@@ -140,8 +202,8 @@ document
 
     if (
         currentIndex <
-        questions.length - 1
-    ) {
+        currentQuestions.length - 1
+        ) {
 
         currentIndex++;
 
@@ -204,8 +266,8 @@ skipButton.addEventListener(
         );
 
         if (
-            currentIndex <
-            questions.length - 1
+        currentIndex <
+        currentQuestions.length - 1
         ) {
 
             currentIndex++;
@@ -233,7 +295,7 @@ document
 
     const unanswered = [];
 
-    questions.forEach(
+    currentQuestions.forEach(
         (question, index) => {
 
             if (
@@ -294,7 +356,7 @@ function gradeQuiz() {
     let skippedCount = 0;
 
     const skippedQuestions =
-questions.filter(
+currentQuestions.filter(
     (question, index) =>
     userAnswers[index] === -1
 );
@@ -322,7 +384,7 @@ if (
 
 }
 
-   questions.forEach(
+   currentQuestions.forEach(
     (question, index) => {
 
         if (
@@ -359,7 +421,7 @@ if (
     (
         correctCount
         /
-        questions.length
+        currentQuestions.length
         * 100
     ).toFixed(1);
 
@@ -405,7 +467,7 @@ if (
 .innerHTML = `
 
     <h2>
-    ${questions.length}問中
+    ${currentQuestions.length}問中
     ${correctCount}問正解
     </h2>
 
@@ -479,7 +541,7 @@ button.classList.add(
         button.onclick = () => {
 
             const targetIndex =
-            questions.findIndex(
+            currentQuestions.findIndex(
                 q =>
                 q.id === questionId
             );
@@ -515,7 +577,7 @@ function showAnswerReview() {
 
     reviewArea.innerHTML = "";
 
-    questions.forEach(
+    currentQuestions.forEach(
         (question, index) => {
 
             const isCorrect =
@@ -543,7 +605,9 @@ else {
     : "incorrect";
 
 }
-            let userAnswerText = "";
+            const choiceNumber =
+
+["①","②","③","④"];
 
 if (
     userAnswers[index] === -1
@@ -556,16 +620,22 @@ if (
 else {
 
     userAnswerText =
-    question.choices[
-        userAnswers[index]
-    ];
+
+`${choiceNumber[
+    userAnswers[index]
+]} ${question.choices[
+    userAnswers[index]
+]}`;
 
 }
 
             const correctAnswerText =
-            question.choices[
-                question.answer
-            ];
+
+`${choiceNumber[
+    question.answer
+]} ${question.choices[
+    question.answer
+]}`;
 
             /* ==========================
                解説がある時だけ表示
@@ -666,3 +736,111 @@ document
     showQuestion();
 
 };
+
+/* ========================================
+   年度切替
+======================================== */
+
+function loadYear(year) {
+
+    currentQuestions =
+questions.filter(
+    q => q.year === year
+);
+
+shuffleArray(
+    currentQuestions
+);
+
+    userAnswers = [];
+
+    localStorage.removeItem(
+        "quizAnswers"
+    );
+
+    localStorage.removeItem(
+        "quizCurrentIndex"
+    );
+
+    document.getElementById(
+        "result"
+    ).innerHTML = "";
+
+    document.getElementById(
+        "unanswered-area"
+    ).innerHTML = "";
+
+    document.getElementById(
+        "answer-review"
+    ).innerHTML = "";
+
+    document.getElementById(
+        "restart-btn"
+    ).style.display =
+    "none";
+
+    showQuestion();
+}
+
+function loadAllQuestions() {
+
+    currentQuestions =
+[...questions];
+
+shuffleArray(
+    currentQuestions
+);
+    userAnswers = [];
+
+    localStorage.removeItem(
+        "quizAnswers"
+    );
+
+    localStorage.removeItem(
+        "quizCurrentIndex"
+    );
+
+    document.getElementById(
+        "result"
+    ).innerHTML = "";
+
+    document.getElementById(
+        "unanswered-area"
+    ).innerHTML = "";
+
+    document.getElementById(
+        "answer-review"
+    ).innerHTML = "";
+
+    document.getElementById(
+        "restart-btn"
+    ).style.display =
+    "none";
+
+    showQuestion();
+}
+
+function shuffleArray(array) {
+
+    for (
+        let i = array.length - 1;
+        i > 0;
+        i--
+    ) {
+
+        const j =
+        Math.floor(
+            Math.random() * (i + 1)
+        );
+
+        [
+            array[i],
+            array[j]
+        ] = [
+            array[j],
+            array[i]
+        ];
+
+    }
+
+}
