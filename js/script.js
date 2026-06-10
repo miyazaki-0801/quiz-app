@@ -581,65 +581,64 @@ function showAnswerReview() {
         (question, index) => {
 
             const isCorrect =
-            userAnswers[index]
-            === question.answer;
+            userAnswers[index] ===
+            question.answer;
 
             const result =
             isCorrect ? "○" : "×";
 
             let resultClass = "";
 
-if (
-    userAnswers[index] === -1
-) {
+            if (
+                userAnswers[index] === -1
+            ) {
 
-    resultClass =
-    "skipped";
+                resultClass =
+                "skipped";
 
-}
-else {
+            }
+            else {
 
-    resultClass =
-    isCorrect
-    ? "correct"
-    : "incorrect";
+                resultClass =
+                isCorrect
+                ? "correct"
+                : "incorrect";
 
-}
+            }
+
             const choiceNumber =
+            ["①","②","③","④"];
 
-["①","②","③","④"];
+            /* ←これ重要 */
+            let userAnswerText = "";
 
-if (
-    userAnswers[index] === -1
-) {
+            if (
+                userAnswers[index] === -1
+            ) {
 
-    userAnswerText =
-    "⏭️ スキップ";
+                userAnswerText =
+                "⏭️ スキップ";
 
-}
-else {
+            }
+            else {
 
-    userAnswerText =
+                userAnswerText =
 
-`${choiceNumber[
-    userAnswers[index]
-]} ${question.choices[
-    userAnswers[index]
-]}`;
+                `${choiceNumber[
+                    userAnswers[index]
+                ]} ${question.choices[
+                    userAnswers[index]
+                ]}`;
 
-}
+            }
 
             const correctAnswerText =
 
-`${choiceNumber[
-    question.answer
-]} ${question.choices[
-    question.answer
-]}`;
-
-            /* ==========================
-               解説がある時だけ表示
-            ========================== */
+            `${choiceNumber[
+                question.answer
+            ]} ${question.choices[
+                question.answer
+            ]}`;
 
             let explanationHtml = "";
 
@@ -663,7 +662,8 @@ else {
                 <div class="review-card">
 
                     <h3 class="${resultClass}">
-                        問${question.id}
+                        ${question.year}
+                        第${question.id}問
                         ${result}
                     </h3>
 
@@ -687,7 +687,6 @@ else {
     );
 
 }
-
 
 /* ========================================
    リスタート
@@ -752,6 +751,8 @@ shuffleArray(
     currentQuestions
 );
 
+    currentIndex = 0;
+
     userAnswers = [];
 
     localStorage.removeItem(
@@ -790,6 +791,9 @@ function loadAllQuestions() {
 shuffleArray(
     currentQuestions
 );
+
+    currentIndex = 0;
+
     userAnswers = [];
 
     localStorage.removeItem(
