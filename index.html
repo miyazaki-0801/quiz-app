@@ -12,6 +12,34 @@
 
 <h1>📘 土木試験対策アプリ</h1>
 
+<div id="year-select">
+
+    <button onclick="loadYear('R3')">
+        令和3年
+    </button>
+
+    <button onclick="loadYear('R4')">
+        令和4年
+    </button>
+
+    <button onclick="loadYear('R5')">
+        令和5年
+    </button>
+
+    <button onclick="loadYear('R6')">
+        令和6年
+    </button>
+
+    <button onclick="loadYear('R7')">
+        令和7年
+    </button>
+
+    <button onclick="loadAllQuestions()">
+        全問題
+    </button>
+
+</div>
+
 <div id="quiz-container">
 
     <div id="question-number"></div>
@@ -25,6 +53,11 @@
 </div>
 
     <h2 id="question"></h2>
+
+    <img
+id="question-image"
+style="display:none;"
+alt="問題図">
 
     <div id="choices"></div>
 
@@ -57,9 +90,14 @@ style="display:none;"
 もう一度挑戦
 </button>
 
+<script src="js/r3.js"></script>
+<script src="js/r4.js"></script>
+<script src="js/r5.js"></script>
+<script src="js/r6.js"></script>
+<script src="js/r7.js"></script>
+
 <script src="js/questions.js"></script>
 <script src="js/script.js"></script>
-
 </body>
 </html>
 
